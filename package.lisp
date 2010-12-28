@@ -22,4 +22,5 @@
            :similarity-lookup
            :list-lookup
            :list-search
-           :browse-node-lookup))
+           :browse-node-lookup
+           :lookup))

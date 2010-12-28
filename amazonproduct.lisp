@@ -125,3 +125,9 @@
 (defoperation list-lookup list-id list-type)
 (defoperation list-search list-type)
 (defoperation browse-node-lookup browse-node-id)
+
+(defun lookup (&rest args &key similar &allow-other-keys)
+  (apply (if similar
+             #'similarity-lookup
+             #'item-lookup)
+         (delete-from-plist args :similar)))
