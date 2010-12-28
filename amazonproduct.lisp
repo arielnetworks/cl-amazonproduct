@@ -96,32 +96,33 @@
         (error "AWS Error: ~A" (aref error-code 0))
         input)))
 
-(defun do-request (operation &rest params)
+(defun do-request (operation &rest key-pairs &key (result-type :cxml) &allow-other-keys)
   (check-aws-keys)
-  (loop with param-alist
-        with cxml-handler = #'response-cxml-handler
-        with handler = cxml-handler
-        for (name value) on params by #'cddr
-        do (case name
-             (:format
-              (case value
-                (:cxml (setf handler cxml-handler))
-                (:xmls (setf handler #'response-xmls-handler))
-                (error "unknown format ~A" value)))
-             (t (let ((name (string-camelcase name)))
-                  (push (cons name (aws-param-value value)) param-alist))))
-        finally (return (aws-request operation
-                                     param-alist
-                                     (compose handler #'response-error-handler)))))
+  (unless (member result-type '(:cxml :xmls))
+    (error "Unknown result-type: ~A" result-type))
+  (setf key-pairs (delete-from-plist key-pairs :result-type))
+  (aws-request operation
+               (loop for (name value) on key-pairs by #'cddr
+                     collect (cons (string-camelcase (symbol-name name))
+                                   (aws-param-value value)))
+               (compose (if (eq :xmls result-type)
+                            #'response-xmls-handler
+                            #'response-cxml-handler)
+                        #'response-error-handler)))
 
 (defmacro defoperation (name &rest required-params)
-  `(defun ,name (,@required-params &rest params)
-     (apply #'do-request
-            ,(string-camelcase name)
-            ,@(loop for param in required-params
-                    collect (intern (string-upcase param) :keyword)
-                    collect param)
-            params)))
+  (with-gensyms (key-pairs)
+    `(defun ,name (&rest ,key-pairs &key ,@required-params &allow-other-keys)
+       (apply #'do-request
+              ,(string-camelcase name)
+              ,@(loop for param in required-params
+                      collect (intern (string-upcase param) :keyword)
+                      collect param)
+              (delete-from-plist
+               ,key-pairs
+               ,@(mapcar (lambda (param)
+                           (intern (symbol-name param) :keyword))
+                         required-params))))))
 
 (defoperation item-lookup item-id)
 (defoperation item-search search-index)
