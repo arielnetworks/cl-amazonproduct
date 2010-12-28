@@ -15,5 +15,7 @@
                :ironclad
                :drakma
                :cxml)
+  :serial t
   :components ((:file "package")
-               (:file "amazonproduct" :depends-on ("package"))))
+               (:file "util")
+               (:file "amazonproduct")))

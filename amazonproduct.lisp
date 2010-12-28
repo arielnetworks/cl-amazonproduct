@@ -14,16 +14,6 @@
                 (:us "http" "ecs.amazonaws.com" "/onca/xml")))
 (defparameter *aws-version* "2009-11-01")
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun string-camelcase (name)
-    "Return camelcased name."
-    (if (symbolp name)
-        (remove #\- (string-capitalize name))
-        name)))
-
-(defun string-join (delimiter string-list)
-  (format nil #?"~{~A~^~A~}" string-list delimiter))
-
 (defun hmac-sha256-digest (key message &key (encoding :utf-8))
   "Return HMAC-SHA256 digest with base64 encoded."
   (let* ((key (babel:string-to-octets key :encoding encoding))
