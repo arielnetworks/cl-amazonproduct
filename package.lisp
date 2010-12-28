@@ -1,7 +1,17 @@
 (in-package :cl-user)
 
 (defpackage cl-amazonproduct
-  (:use :cl :cl-utilities)
+  (:use :cl
+        :cl-utilities
+        :cl-interpol
+        :cl-utilities
+        :cl-ppcre
+        :cl-base64
+        :babel
+        :ironclad
+        :drakma
+        :cxml)
+  (:shadowing-import-from :ironclad :expt-mod :null)
   (:export :*aws-access-key*
            :*aws-secret-key*
            :*aws-locale*

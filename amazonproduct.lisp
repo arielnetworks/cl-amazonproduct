@@ -1,12 +1,5 @@
 (in-package :cl-amazonproduct)
 
-(require :cl-base64)
-(require :cl-ppcre)
-(require :ironclad)
-(require :babel)
-(require :drakma)
-(require :cxml)
-
 (cl-interpol:enable-interpol-syntax)
 
 (defparameter *aws-access-key* nil)
