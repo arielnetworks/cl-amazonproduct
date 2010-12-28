@@ -21,8 +21,8 @@
         (remove #\- (string-capitalize name))
         name)))
 
-(defun join (objects delimiter)
-  (format nil #?"~{~A~^${delimiter}~}" objects delimiter))
+(defun string-join (string-list delimiter)
+  (format nil #?"~{~A~^~A~}" string-list delimiter))
 
 (defun hmac-sha256-digest (key message &key (encoding :utf-8))
   "Return HMAC-SHA256 digest with base64 encoded."
@@ -52,11 +52,11 @@
 (defun alist-to-url-escaped-string (alist &key (encoding :utf-8))
   (loop for (name . value) in alist
         collect (format nil "~A=~A" name (url-escape value :encoding encoding)) into lst
-        finally (return (join lst "&"))))
+        finally (return (string-join lst "&"))))
 
 (defun aws-param-value (object)
   (typecase object
-    (list (join object ","))
+    (list (string-join object ","))
     (symbol (string-camelcase object))
     (t object)))
 
