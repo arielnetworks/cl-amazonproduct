@@ -9,12 +9,12 @@
   :version "0.1"
   :depends-on (:cl-interpol
                :cl-ppcre
-               :cl-utilities
                :cl-base64
                :babel
                :ironclad
                :drakma
-               :cxml)
+               :cxml
+               :alexandria)
   :serial t
   :components ((:file "package")
                (:file "util")
