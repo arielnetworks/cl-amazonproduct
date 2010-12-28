@@ -47,7 +47,7 @@
 (defun aws-param-value (object)
   (typecase object
     (list (string-join "," object))
-    (symbol (string-camelcase object))
+    (symbol (string-camelcase (symbol-name object)))
     (t object)))
 
 (defun aws-request-params (operation params)
