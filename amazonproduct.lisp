@@ -32,7 +32,7 @@
       (decode-universal-time universal-time)
     (format nil "~4,'0D-~2,'0D-~2,'0DT~2,'0D:~2,'0D:~2,'0DZ" year month day hour min sec)))
 
-(defun url-escape (string &key (encoding :utf-8))
+(defun url-escape (string &optional (encoding :utf-8))
   "Return forcely url-escaped string."
   (loop for octet across (babel:string-to-octets string :encoding encoding)
         collect (let ((char (code-char octet)))
@@ -43,9 +43,9 @@
           into lst
         finally (return (apply #'concatenate 'string lst))))
 
-(defun alist-to-url-escaped-string (alist &key (encoding :utf-8))
+(defun alist-to-url-escaped-string (alist &optional (encoding :utf-8))
   (loop for (name . value) in alist
-        collect (format nil "~A=~A" name (url-escape value :encoding encoding)) into lst
+        collect (format nil "~A=~A" name (url-escape value encoding)) into lst
         finally (return (string-join "&" lst))))
 
 (defun aws-param-value (object)
@@ -70,10 +70,8 @@
     (let* ((params (aws-request-params operation params))
            (params-string (alist-to-url-escaped-string params))
            (message #?"GET\n${host}\n${path}\n${params-string}")
-           (signature (hmac-sha256-digest *aws-secret-key* message))
-           (params (cons (cons "Signature" signature) params))
-           (params-string (drakma::alist-to-url-encoded-string params :utf-8)))
-      #?"${scheme}://${host}${path}?${params-string}")))
+           (signature (hmac-sha256-digest *aws-secret-key* message)))
+      #?"${scheme}://${host}${path}?${params-string}&Signature=${(url-escape signature)}")))
 
 (defun aws-request (operation params handler)
   "Request for `opeartion' on `params' and call `handler' with response body."
