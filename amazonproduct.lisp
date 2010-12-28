@@ -70,7 +70,7 @@
           ,@params)
         #'string< :key #'car))
 
-(defun aws-setup-request (operation params)
+(defun aws-request-url (operation params)
   "Setup an AWS compliant request for `operation' on `params' and return a request URL."
   (destructuring-bind (scheme host path) (cdr (assoc *aws-locale* *aws-servers*))
     (let* ((params (aws-request-params operation params))
@@ -83,12 +83,11 @@
 
 (defun aws-request (operation params handler)
   "Request for `opeartion' on `params' and call `handler' with response body."
-  (let ((url (aws-setup-request operation params)))
-    (multiple-value-bind (body status-code)
-        (drakma:http-request url
-                             :method :get
-                             :external-format-out :utf-8)
-      (funcall handler body))))
+  (multiple-value-bind (body status-code)
+      (drakma:http-request (aws-request-url operation params)
+                           :method :get
+                           :external-format-out :utf-8)
+    (funcall handler body)))
 
 (defun response-cxml-handler (input)
   (cxml:parse input (cxml-dom:make-dom-builder)))
