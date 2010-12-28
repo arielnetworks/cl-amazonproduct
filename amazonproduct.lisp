@@ -116,13 +116,10 @@
        (apply #'do-request
               ,(string-camelcase name)
               ,@(loop for param in required-params
-                      collect (intern (string-upcase param) :keyword)
-                      collect param)
+                      append (list (make-keyword param) param))
               (delete-from-plist
                ,key-pairs
-               ,@(mapcar (lambda (param)
-                           (intern (symbol-name param) :keyword))
-                         required-params))))))
+               ,@(mapcar #'make-keyword required-params))))))
 
 (defoperation item-lookup item-id)
 (defoperation item-search search-index)
