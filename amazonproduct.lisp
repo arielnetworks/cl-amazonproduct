@@ -90,11 +90,10 @@
   (cxml:parse input (cxml-xmls:make-xmls-builder)))
 
 (defun response-error-handler (input)
-  (multiple-value-bind (match regs)
+  (multiple-value-bind (match error-code)
       (cl-ppcre:scan-to-strings "<Error><Code>([^<]+?)</Code>" input)
     (if match
-        (let ((error-code (aref regs 0)))
-          (error "AWS Error: ~A" error-code))
+        (error "AWS Error: ~A" (aref error-code 0))
         input)))
 
 (defun do-request (operation &rest params)
