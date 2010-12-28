@@ -43,13 +43,11 @@
            (signature (hmac-sha256-digest *aws-secret-key* message)))
       #?"${scheme}://${host}${path}?${params-string}&Signature=${(url-escape signature)}")))
 
-(defun aws-request (operation params handler)
+(defun aws-request (operation params)
   "Request for `opeartion' on `params' and call `handler' with response body."
-  (multiple-value-bind (body status-code)
-      (drakma:http-request (aws-request-url operation params)
-                           :method :get
-                           :external-format-out :utf-8)
-    (funcall handler body)))
+  (drakma:http-request (aws-request-url operation params)
+                       :method :get
+                       :external-format-out :utf-8))
 
 (defun response-cxml-handler (input)
   (cxml:parse input (cxml-dom:make-dom-builder)))
@@ -69,14 +67,16 @@
   (unless (member result-type '(:cxml :xmls))
     (error "Unknown result-type: ~A" result-type))
   (setf key-pairs (delete-from-plist key-pairs :result-type))
-  (aws-request operation
-               (loop for (name value) on key-pairs by #'cddr
-                     collect (cons (string-camelcase (symbol-name name))
-                                   (aws-param-value value)))
-               (compose (if (eq :xmls result-type)
-                            #'response-xmls-handler
-                            #'response-cxml-handler)
-                        #'response-error-handler)))
+  (multiple-value-bind (body status-code)
+      (aws-request operation
+                   (loop for (name value) on key-pairs by #'cddr
+                         collect (cons (string-camelcase (symbol-name name))
+                                       (aws-param-value value))))
+    (response-error-handler body)
+    (funcall (if (eq :xmls result-type)
+                 #'response-xmls-handler
+                 #'response-cxml-handler)
+             body)))
 
 (defmacro defoperation (name &rest required-params)
   (with-gensyms (key-pairs)
