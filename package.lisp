@@ -4,7 +4,6 @@
   (:use :cl
         :cl-utilities
         :cl-interpol
-        :cl-utilities
         :cl-ppcre
         :cl-base64
         :babel
