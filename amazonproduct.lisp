@@ -60,18 +60,15 @@
     (symbol (string-camelcase object))
     (t object)))
 
-(defun aws-sort-request-params (params)
-  "Sort request parameters alist on its parameter name."
-  (sort params #'(lambda (a b) (string< (car a) (car b)))))
-
 (defun aws-request-params (operation params)
   "Return AWS compliant request parameters for `opeartion' on `params'."
-  (aws-sort-request-params `(("Service" . "AWSECommerceService")
-                             ("AWSAccessKeyId" . ,*aws-access-key*)
-                             ("Operation" . ,operation)
-                             ("Timestamp" . ,(format-xmldatetime (get-universal-time) 0))
-                             ("Version" . ,*aws-version*)
-                             ,@params)))
+  (sort `(("Service" . "AWSECommerceService")
+          ("AWSAccessKeyId" . ,*aws-access-key*)
+          ("Operation" . ,operation)
+          ("Timestamp" . ,(format-xmldatetime (get-universal-time) 0))
+          ("Version" . ,*aws-version*)
+          ,@params)
+        #'string< :key #'car))
 
 (defun aws-setup-request (operation params)
   "Setup an AWS compliant request for `operation' on `params' and return a request URL."
