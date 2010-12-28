@@ -14,6 +14,10 @@
                 (:us "http" "ecs.amazonaws.com" "/onca/xml")))
 (defparameter *aws-version* "2009-11-01")
 
+(defun check-aws-keys ()
+  (or *aws-access-key* (error "Invalid Access Key. Set `*aws-access-key*' first."))
+  (or *aws-secret-key* (error "Invalid Secret Key. Set `*aws-secret-key*' first.")))
+
 (defun hmac-sha256-digest (key message &key (encoding :utf-8))
   "Return HMAC-SHA256 digest with base64 encoded."
   (let* ((key (babel:string-to-octets key :encoding encoding))
@@ -94,6 +98,7 @@
         input)))
 
 (defun do-request (operation &rest params)
+  (check-aws-keys)
   (loop with param-alist
         with cxml-handler = #'response-cxml-handler
         with handler = cxml-handler
