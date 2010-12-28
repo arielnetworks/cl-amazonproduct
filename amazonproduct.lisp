@@ -15,8 +15,8 @@
 (defparameter *aws-version* "2009-11-01")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun capitalize (name)
-    "Return capitalized name."
+  (defun string-camelcase (name)
+    "Return camelcased name."
     (if (symbolp name)
         (remove #\- (string-capitalize name))
         name)))
@@ -57,7 +57,7 @@
 (defun aws-param-value (object)
   (typecase object
     (list (join object ","))
-    (symbol (capitalize object))
+    (symbol (string-camelcase object))
     (t object)))
 
 (defun aws-sort-request-params (params)
@@ -118,7 +118,7 @@
                 (:cxml (setf handler cxml-handler))
                 (:xmls (setf handler #'response-xmls-handler))
                 (error "unknown format ~A" value)))
-             (t (let ((name (capitalize name)))
+             (t (let ((name (string-camelcase name)))
                   (push (cons name (aws-param-value value)) param-alist))))
         finally (return (aws-request operation
                                      param-alist
@@ -127,7 +127,7 @@
 (defmacro defoperation (name &rest required-params)
   `(defun ,name (,@required-params &rest params)
      (apply #'do-request
-            ,(capitalize name)
+            ,(string-camelcase name)
             ,@(loop for param in required-params
                     collect (intern (string-upcase param) :keyword)
                     collect param)
