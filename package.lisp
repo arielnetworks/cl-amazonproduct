@@ -11,6 +11,7 @@
         :cxml
         :alexandria)
   (:shadowing-import-from :ironclad :null)
+  (:shadowing-import-from :babel :string-to-octets)
   (:export :*aws-access-key*
            :*aws-secret-key*
            :*aws-locale*
