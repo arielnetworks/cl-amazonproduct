@@ -15,8 +15,7 @@
                :drakma
                :cxml
                :alexandria)
-  :serial t
-  :components ((:module :src
+  :components ((:module "src"
                 :serial t
                 :components ((:file "package")
                              (:file "special")
