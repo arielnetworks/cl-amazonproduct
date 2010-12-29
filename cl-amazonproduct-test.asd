@@ -6,7 +6,7 @@
 (in-package :cl-amazonproduct-test-asd)
 
 (defsystem cl-amazonproduct-test
-  :depends-on (:cl-amazonproduct :fiveam)
+  :depends-on (:cl-amazonproduct :cl-test-more)
   :components ((:module "test"
                 :serial t
                 :components ((:file "package")
