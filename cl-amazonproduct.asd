@@ -15,10 +15,11 @@
                :drakma
                :cxml
                :alexandria)
-  :serial t
-  :components ((:file "package")
-               (:file "special")
-               (:file "util")
-               (:file "request")
-               (:file "response")
-               (:file "amazonproduct")))
+  :components ((:module "src"
+                :serial t
+                :components ((:file "package")
+                             (:file "special")
+                             (:file "util")
+                             (:file "request")
+                             (:file "response")
+                             (:file "amazonproduct")))))

@@ -4,6 +4,9 @@
   (or *aws-access-key* (error "Invalid Access Key. Set `*aws-access-key*' first."))
   (or *aws-secret-key* (error "Invalid Secret Key. Set `*aws-secret-key*' first.")))
 
+(defun aws-param-name (key)
+  (string-camelcase (symbol-name key)))
+
 (defun aws-param-value (object)
   (typecase object
     (list (string-join "," object))
@@ -12,19 +15,14 @@
 
 (defun do-request (operation &rest key-pairs &key (result-type :cxml) &allow-other-keys)
   (check-aws-keys)
-  (unless (member result-type '(:cxml :xmls))
-    (error "Unknown result-type: ~A" result-type))
   (setf key-pairs (delete-from-plist key-pairs :result-type))
   (multiple-value-bind (body status-code)
       (aws-request operation
                    (loop for (name value) on key-pairs by #'cddr
-                         collect (cons (string-camelcase (symbol-name name))
+                         collect (cons (aws-param-name name)
                                        (aws-param-value value))))
     (response-error-handler body)
-    (funcall (if (eq :xmls result-type)
-                 #'response-xmls-handler
-                 #'response-cxml-handler)
-             body)))
+    (response-handler body result-type)))
 
 (defmacro defoperation (name &rest required-params)
   (let ((fun-name (intern (format nil "~A*" name)))
