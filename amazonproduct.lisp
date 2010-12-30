@@ -27,15 +27,20 @@
              body)))
 
 (defmacro defoperation (name &rest required-params)
-  (with-gensyms (key-pairs)
-    `(defun ,name (&rest ,key-pairs &key ,@required-params &allow-other-keys)
-       (apply #'do-request
-              ,(string-camelcase name)
-              ,@(loop for param in required-params
-                      append (list (make-keyword param) param))
-              (delete-from-plist
-               ,key-pairs
-               ,@(mapcar #'make-keyword required-params))))))
+  (let ((fun-name (intern (format nil "~A*" name)))
+        (param-plist (loop for param in required-params
+                           append (list (make-keyword param) param))))
+    (with-gensyms (key-pairs additional-params)
+      `(progn
+         (defun ,fun-name (&rest ,key-pairs &key ,@required-params &allow-other-keys)
+           (apply #'do-request
+                  ,(string-camelcase name)
+                  ,@param-plist
+                  (delete-from-plist
+                   ,key-pairs
+                   ,@(mapcar #'make-keyword required-params))))
+         (defun ,name (,@required-params &rest ,additional-params)
+           (apply #',fun-name ,@param-plist ,additional-params))))))
 
 (defoperation item-lookup item-id)
 (defoperation item-search search-index)
@@ -43,9 +48,3 @@
 (defoperation list-lookup list-id list-type)
 (defoperation list-search list-type)
 (defoperation browse-node-lookup browse-node-id)
-
-(defun lookup (&rest args &key similar &allow-other-keys)
-  (apply (if similar
-             #'similarity-lookup
-             #'item-lookup)
-         (delete-from-plist args :similar)))

@@ -1,16 +1,24 @@
-# cl-amazonproduct - Common Lisp Interface to Amazon Product API
+cl-amazonproduct
+================
 
-## Usage
+cl-amazonproduct is an Amazon Product Advertising API interface library for Common Lisp.
+
+Usage
+-----
 
     ;; Set your access keys.
     (setf *aws-access-key* "YOUR-AWS-ACCESS-KEY")
     (setf *aws-secret-key* "YOUR-AWS-SECRET-KEY")
     (setf *aws-locale* :jp)
     
-    (item-lookup :item-id "4274067211")
-    (item-search :search-index :books :keywords "Common Lisp")
+    ;; Lookup an item with ASIN.
+    (item-lookup "4274067211")
+    
+    ;; Search items with keyword "Common Lisp" in books index.
+    (item-search :books :keywords "Common Lisp")
 
-## Functions
+Functions
+---------
 
 * item-lookup [item-id]
 * item-search [search-index]
@@ -19,7 +27,8 @@
 * list-search [list-type]
 * browse-node-lookup [browse-node-id]
 
-## License
+License
+-------
 
 Copyright (C) 2010 Tomohiro Matsuyama, Eitarow Fukamachi.  
 Licensed under the LLGPL License.

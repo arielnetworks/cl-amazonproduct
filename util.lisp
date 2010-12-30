@@ -18,20 +18,14 @@
 
 (declaim (inline string-camelcase))
 (defun string-camelcase (val)
-  (declare (optimize speed)
-           (type string val))
   "Return camelcased name."
-  (the string (remove #\- (string-capitalize val))))
+  (remove #\- (string-capitalize val)))
 
 (declaim (inline string-join))
 (defun string-join (delimiter string-list)
-  (declare (optimize speed)
-           (type character delimiter)
-           (type list string-list))
-  (the string (format nil #?"~{~A~^${delimiter}~}" string-list)))
+  (format nil #?"~{~A~^${delimiter}~}" string-list))
 
 (defun url-escape (string &optional (encoding :utf-8))
-  (declare (type string string))
   "Return forcely url-escaped string."
   (loop for octet across (babel:string-to-octets string :encoding encoding)
         collect (let ((char (code-char octet)))
