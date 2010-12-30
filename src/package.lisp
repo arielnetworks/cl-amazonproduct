@@ -19,9 +19,14 @@
            :*aws-version*
 
            :item-lookup
+           :item-lookup*
            :item-search
+           :item-search*
            :similarity-lookup
+           :similarity-lookup*
            :list-lookup
+           :list-lookup*
            :list-search
+           :list-search*
            :browse-node-lookup
-           :lookup))
+           :browse-node-lookup*))
