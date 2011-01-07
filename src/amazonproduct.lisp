@@ -13,16 +13,16 @@
     (symbol (string-camelcase (symbol-name object)))
     (t object)))
 
-(defun do-request (operation &rest key-pairs &key (result-type :cxml) &allow-other-keys)
+(defun do-request (operation &rest key-pairs &key (xml-builder (cxml-dom:make-dom-builder)) &allow-other-keys)
   (check-aws-keys)
-  (setf key-pairs (delete-from-plist key-pairs :result-type))
+  (setf key-pairs (delete-from-plist key-pairs :xml-builder))
   (multiple-value-bind (body status-code)
       (aws-request operation
                    (loop for (name value) on key-pairs by #'cddr
                          collect (cons (aws-param-name name)
                                        (aws-param-value value))))
     (response-error-handler body)
-    (response-handler body result-type)))
+    (response-handler body xml-builder)))
 
 (defmacro defoperation (name &rest required-params)
   (let ((fun-name (intern (format nil "~A*" name)))
