@@ -17,7 +17,6 @@
            :*aws-locale*
            :*aws-servers*
            :*aws-version*
-
            :item-lookup
            :item-lookup*
            :item-search
@@ -29,4 +28,7 @@
            :list-search
            :list-search*
            :browse-node-lookup
-           :browse-node-lookup*))
+           :browse-node-lookup*
+           :cxml-response-handler
+           :xmls-response-handler
+           :string-response-handler))

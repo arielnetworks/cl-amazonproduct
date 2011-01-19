@@ -1,9 +1,18 @@
 (in-package :cl-amazonproduct)
 
-(defun response-handler (input xml-builder)
-  (cxml:parse input xml-builder))
+(defun cxml-response-handler (input)
+  (cxml:parse input (cxml-dom:make-dom-builder)))
 
-(defun response-error-handler (input)
+(defun xmls-response-handler (input)
+  (cxml:parse input (cxml-xmls:make-xmls-builder)))
+
+(defun string-response-handler (input)
+  input)
+
+(defun run-response-handler (input handler)
+  (funcall handler input))
+
+(defun run-response-error-handler (input)
   (multiple-value-bind (match error-code)
       (cl-ppcre:scan-to-strings "<Error><Code>([^<]+?)</Code>" input)
     (if match
