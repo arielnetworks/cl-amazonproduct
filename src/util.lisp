@@ -25,12 +25,14 @@
 (defun string-join (delimiter string-list)
   (format nil #?"~{~A~^${delimiter}~}" string-list))
 
+(defun url-safe-char-p (char)
+  (find char "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.-"))
+
 (defun url-escape (string &optional (encoding :utf-8))
   "Return forcely url-escaped string."
   (loop for octet across (babel:string-to-octets string :encoding encoding)
         collect (let ((char (code-char octet)))
-                  (if (or (alphanumericp char)
-                          (member char '(#\_ #\. #\-)))
+                  (if (url-safe-char-p char)
                       (string char)
                       (format nil "%~2,'0X" octet)))
           into lst
