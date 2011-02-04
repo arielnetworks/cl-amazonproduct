@@ -19,7 +19,6 @@
            (params-string (alist-to-url-escaped-string params))
            (message #?"GET\n${host}\n${path}\n${params-string}")
            (signature (hmac-sha256-digest *aws-secret-key* message)))
-      (print params-string)
       #?"${scheme}://${host}${path}?${params-string}&Signature=${(url-escape signature)}")))
 
 (defun aws-request (operation params)
