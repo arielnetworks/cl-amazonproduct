@@ -11,6 +11,7 @@
   (typecase object
     (list (string-join "," object))
     (symbol (string-camelcase (symbol-name object)))
+    (integer (format nil "~D" object))
     (t object)))
 
 (defun do-request (operation &rest key-pairs &key (response-handler #'cxml-response-handler) &allow-other-keys)
