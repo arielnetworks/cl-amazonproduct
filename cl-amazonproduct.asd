@@ -20,6 +20,7 @@
                 :components ((:file "package")
                              (:file "special")
                              (:file "util")
+                             (:file "condition")
                              (:file "request")
                              (:file "response")
                              (:file "amazonproduct")))))

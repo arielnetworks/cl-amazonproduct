@@ -31,4 +31,5 @@
            :browse-node-lookup*
            :cxml-response-handler
            :xmls-response-handler
-           :string-response-handler))
+           :string-response-handler
+           :aws-error))
