@@ -1,6 +1,7 @@
 (in-package :cl-user)
 
 (defpackage cl-amazonproduct
+  (:nicknames :amazonproduct)
   (:use :cl
         :cl-interpol
         :cl-ppcre
