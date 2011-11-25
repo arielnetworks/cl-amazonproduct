@@ -1,5 +1,6 @@
 (in-package :cl-amazonproduct)
 
+(defparameter *aws-associate-tag* nil)
 (defparameter *aws-access-key* nil)
 (defparameter *aws-secret-key* nil)
 (defparameter *aws-locale* :us)

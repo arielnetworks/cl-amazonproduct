@@ -14,8 +14,9 @@
 
 (defun run-response-error-handler (input)
   (multiple-value-bind (match error-code)
-      (cl-ppcre:scan-to-strings "<Error><Code>([^<]+?)</Code>" input)
+      (cl-ppcre:scan-to-strings "<Error><Code>([^<]+?)</Code><Message>([^<]+?)</Message>" input)
     (if match
         (error (make-instance 'aws-error
-                  :error-code (aref error-code 0)))
+                  :error-code (aref error-code 0)
+                  :error-message (aref error-code 1)))
         input)))

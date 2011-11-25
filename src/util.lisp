@@ -13,7 +13,8 @@
 (defun format-xmldatetime (universal-time &optional time-zone)
   "Return `universal-time' in xml dateTime format."
   (multiple-value-bind (sec min hour day month year day-of-week daylight-saving-time-p time-zone)
-      (decode-universal-time universal-time)
+      (decode-universal-time universal-time time-zone)
+    (declare (ignore day-of-week daylight-saving-time-p time-zone))
     (format nil "~4,'0D-~2,'0D-~2,'0DT~2,'0D:~2,'0D:~2,'0DZ" year month day hour min sec)))
 
 (declaim (inline string-camelcase))
